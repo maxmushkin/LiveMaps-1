@@ -28,7 +28,7 @@ namespace ssir.api
         [FunctionName("RoomStateSim")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "statesim")] HttpRequest req,
-            [Blob("shared", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
+            [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
             ILogger log)
         {
             var atlasConfigFile = Environment.GetEnvironmentVariable("AtlasConfigFile") ?? "atlasConfig.json";

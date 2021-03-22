@@ -17,7 +17,7 @@ namespace ssir.api
         [FunctionName("SideBar")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "sidebar/{region}/{campus}/{building?}/{level?}/{unit?}")] HttpRequest req,
-            [Blob("shared", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
+            [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
             string region,
             string campus,
             string building,

@@ -22,7 +22,7 @@ namespace ssir.api
         [FunctionName("SiteMap")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
-            [Blob("shared", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
+            [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");

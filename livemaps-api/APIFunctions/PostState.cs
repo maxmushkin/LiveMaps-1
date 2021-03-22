@@ -28,7 +28,7 @@ namespace ssir.api
         [FunctionName("PostState")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "state/{region}/{campus}/{building}/{floor}/{room}")] HttpRequest req,
-            [Blob("shared", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
+            [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
             string region,
             string campus,
             string building, 

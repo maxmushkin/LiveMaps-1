@@ -17,7 +17,7 @@ namespace ssir.api
         [FunctionName("Warnings")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "faults/{region}/{campus}/{building}")] HttpRequest req,
-            [Blob("shared", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
+            [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
             string region,
             string campus,
             string building,            

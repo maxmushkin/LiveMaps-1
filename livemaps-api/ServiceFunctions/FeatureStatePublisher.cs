@@ -22,7 +22,7 @@ namespace AzureMapsStatusPublisher
 
         [FunctionName("UpdateFeatureState")]
         public static async Task Run([EventHubTrigger("updatestate", Connection = "EventHubCS")] EventData[] events,
-                                      [Blob("refdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
+                                      [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
                                       ILogger log)
         {
             var atlasConfigFile = Environment.GetEnvironmentVariable("AtlasConfigFile") ?? "atlasConfig.json";
