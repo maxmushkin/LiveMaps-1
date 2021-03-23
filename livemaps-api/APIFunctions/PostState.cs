@@ -1,18 +1,18 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.ComponentModel;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.Storage.Blob;
+
 using Newtonsoft.Json.Linq;
 
 using ssir.api.Models;
@@ -55,18 +55,14 @@ namespace ssir.api
                 errors.Append($"Atlas config for {building} was not found");
             }            
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();            
 
             var atlasFeaturesFileName = $"{region}_{campus}_{building}_featuremap.json".ToLower();
             var featureMapref = container.GetBlockBlobReference(atlasFeaturesFileName);
            
             List<Feature> features;
-            
-
             if (prerequisites)
-            {                
-                var rdi = new Dictionary<string, Dictionary<string, RoomDataItem>>();
+            {   
                 try
                 {
                     features = await blobDataService.ReadBlobData<List<Feature>>(container, atlasFeaturesFileName);
@@ -103,7 +99,7 @@ namespace ssir.api
                     log.LogError(ex.Message);
                 }
 
-                return new OkObjectResult(JsonConvert.SerializeObject(rdi));
+                return new OkObjectResult("Ok");
             }
             else
             {

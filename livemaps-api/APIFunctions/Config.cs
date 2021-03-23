@@ -1,23 +1,19 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
-using System.ComponentModel;
-using System.Text;
-using ssir.api.Services;
-using System.Collections.Generic;
+
 using ssir.api.Models;
-using Microsoft.Azure.Storage.Blob;
-using System.Linq.Expressions;
-using System.Linq;
-using System.Net.Http;
-using ssir.api.Models.Atlas;
-using System.Net;
+using ssir.api.Services;
 
 namespace ssir.api
 {
@@ -45,7 +41,7 @@ namespace ssir.api
                 errors.Append("Required query {building} was not defined");
             }
             
-            var result = "";
+            var result = string.Empty;
             if (prerequisites)
             {
                 try
@@ -68,39 +64,6 @@ namespace ssir.api
             }
 
             return new OkObjectResult(result);
-        }
-
-        private static async Task<List<Feature>> FetchFeaturesFromAtlas(string atlasDataSetId, string atlasSubscriptionKey)
-        {
-            List<Feature> features = new List<Feature>();
-            var limit = 50;
-            string url = $"https://atlas.microsoft.com/wfs/datasets/{atlasDataSetId}/collections/unit/items?api-version=1.0&limit={limit}&subscription-key={atlasSubscriptionKey}";
-            for (int i = 0; ; i++)
-            {
-                using (var client = new HttpClient())
-                {
-                    HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-                    var response = await client.SendAsync(requestMessage);
-
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        break;
-
-                    var result = await response.Content.ReadAsStringAsync();
-
-                    var featureCollection = JsonConvert.DeserializeObject<FeatureCollection>(result);
-                    features.AddRange(featureCollection.Features);
-
-                    if (featureCollection.NumberReturned < limit)
-                        break;
-                    var nextLink = featureCollection.links.FirstOrDefault(f => f.rel == "next");
-                    if (nextLink == null)
-                        break;
-                    else
-                        url = nextLink.href + $"&subscription-key={atlasSubscriptionKey}";
-                }
-            }
-
-            return features;
-        }
+        }        
     }
 }

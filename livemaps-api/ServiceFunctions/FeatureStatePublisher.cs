@@ -18,8 +18,7 @@ using ssir.api.Services;
 namespace AzureMapsStatusPublisher
 {
     public static class FeatureStatePublisher
-    {       
-
+    {
         [FunctionName("UpdateFeatureState")]
         public static async Task Run([EventHubTrigger("updatestate", Connection = "EventHubCS")] EventData[] events,
                                       [Blob("appdata", Connection = "AzureWebJobsStorage")] CloudBlobContainer container,
@@ -45,8 +44,7 @@ namespace AzureMapsStatusPublisher
                         mapsServices.Add(statesetid, new MapsService(buildingConfig.SubscriptionKey, buildingConfig.DatasetId, statesetid));
                     }
                 }
-            }
-           
+            }           
 
             if (prerequisites)
             {

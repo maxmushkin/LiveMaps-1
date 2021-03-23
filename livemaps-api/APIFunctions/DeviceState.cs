@@ -1,14 +1,14 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Text;
+
 using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+
+using ssir.api.Services;
 
 namespace ssir.api
 {
@@ -37,18 +37,10 @@ namespace ssir.api
                 }
 
                 fileName = fileName.ToLower();
-               
-                var devicestateref = container.GetBlockBlobReference(fileName);
-                using (var ms = new MemoryStream())
-                {
-                    await devicestateref.DownloadToStreamAsync(ms);
-                    ms.Position = 0;
-                    using (StreamReader reader = new StreamReader(ms, Encoding.UTF8))
-                    {
-                        var deviceStateData = reader.ReadToEnd();
-                        return new OkObjectResult(deviceStateData);
-                    }
-                };
+
+                var blobDataService = new BlobDataService();
+                var deviceStateData = await blobDataService.ReadBlobData(container, fileName);
+                return new OkObjectResult(deviceStateData);
             }
             catch(Exception ex)
             {

@@ -1,21 +1,19 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.ComponentModel;
 using System.Text;
 using System.Collections.Generic;
-using ssir.api.Models;
 using System.Linq;
-using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.Storage.Blob;
 
+using Newtonsoft.Json;
+
+using ssir.api.Models;
 using ssir.api.Models.Atlas;
 using ssir.api.Services;
 
@@ -165,23 +163,6 @@ namespace ssir.api
                 default:
                     return levelId;
             }
-        }
-
-        private static async Task<IEnumerable<BuildingConfig>> FetchAtlasConfig(CloudBlockBlob configRef)
-        {
-            BuildingConfig[] cfg;
-            using (var ms = new MemoryStream())
-            {
-                await configRef.DownloadToStreamAsync(ms);
-                ms.Position = 0;
-                using (StreamReader reader = new StreamReader(ms, Encoding.UTF8))
-                {
-                    var featuresStr = reader.ReadToEnd();
-                    cfg = JsonConvert.DeserializeObject<BuildingConfig[]>(featuresStr);
-                }
-            }
-
-            return cfg;
-        }        
+        }            
     }
 }
