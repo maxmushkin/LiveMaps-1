@@ -1,10 +1,12 @@
-﻿using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.Azure.Storage.Blob;
+
+using Newtonsoft.Json;
 
 namespace ssir.api.Services
 {

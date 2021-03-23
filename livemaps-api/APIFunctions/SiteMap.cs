@@ -2,18 +2,16 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.WindowsAzure.Storage.Blob;
 using System.Text;
-using System.Collections.Generic;
-using ssir.api.Models;
-using System.Data.SqlClient;
+
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+
 using ssir.api.Services;
-using System.Linq;
 
 namespace ssir.api
 {

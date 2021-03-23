@@ -1,8 +1,7 @@
-﻿using ssir.api.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Text;
+
+using ssir.api.Models;
 
 namespace ssir.api.Services
 {

@@ -12,7 +12,7 @@ using System.Text;
 using ssir.api.Services;
 using System.Collections.Generic;
 using ssir.api.Models;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage.Blob;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Net.Http;
