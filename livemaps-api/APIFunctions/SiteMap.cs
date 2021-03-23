@@ -29,45 +29,33 @@ namespace ssir.api
             var errors = new StringBuilder();
             string siteMap = "sitemap";
 
-            string rebuild = req.Query["rebuild"];
-            bool full = rebuild == "full";
-
+            bool rebuild;
+            bool.TryParse(req.Query["rebuild"], out rebuild);
+            
             var siteMapFile = Environment.GetEnvironmentVariable("SiteMapFile");
             if (string.IsNullOrEmpty(siteMapFile))
             {
                 prerequisites = false;
-                errors.Append("DataBase Connection String property {siteMapFile} is not defined!");
-            }
-
-            var atlasConfigFile = Environment.GetEnvironmentVariable("AtlasConfigFile") ?? "atlasConfig.json";
-            var bds = new BlobDataService(); 
+                errors.Append("Property {siteMapFile} is not defined!");
+            }           
             
             if (prerequisites)
             {
-                await container.CreateIfNotExistsAsync();
-                var siteMapRef = container.GetBlockBlobReference(siteMapFile);                
+                var blobDataService = new BlobDataService();
+                await container.CreateIfNotExistsAsync();                              
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(rebuild))  
-                        if (prerequisites)
-                        {
+                    if (rebuild)
+                    { 
                            // Custom Sitemap builder code                       
                     }
                     else
                     {
                         if (prerequisites)
-                        {                            
-                            using (var ms = new MemoryStream())
-                            {
-                                await siteMapRef.DownloadToStreamAsync(ms);
-                                ms.Position = 0;
-                                using (StreamReader reader = new StreamReader(ms, Encoding.UTF8))
-                                {
-                                    var bacmapstr = reader.ReadToEnd();
-                                    return new OkObjectResult(bacmapstr);                                    
-                                }
-                            }
+                        {
+                            var siteMapData = await blobDataService.ReadBlobData(container, siteMapFile);
+                            return new OkObjectResult(siteMapData);
                         }
                     }
                 }
