@@ -24,6 +24,12 @@ export interface TrackerData {
   id: string;
   name: string;
   position: MapPosition;
+  color: string;
+  icon: string;
+}
+
+export interface WebSocketConnectionMessage{
+  ConnectionId : string;
 }
 
 export interface MapObject {

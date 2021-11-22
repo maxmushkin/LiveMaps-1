@@ -103,7 +103,7 @@ export class IndoorLayer implements Layer {
         component: Legend,
         props: {
           layerId: this.id,
-          title: "Temperature",
+          title: this.name,
           items: this.legendItems,
         }
       };
@@ -146,8 +146,8 @@ const fetchStateColors = async (statesetId: string, layerId: string): Promise<St
     return cached;
   }
 
-  const baseUrl = "https://us.atlas.microsoft.com/featureState/stateset/";
-  const url = baseUrl + `${statesetId}?api-version=1.0&subscription-key=${subscriptionKey}`;
+  const baseUrl = "https://us.atlas.microsoft.com/featureStateSets/";
+  const url = baseUrl + `${statesetId}?api-version=2.0&subscription-key=${subscriptionKey}`;
 
   try {
     const response = await fetch(url)

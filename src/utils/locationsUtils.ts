@@ -8,8 +8,8 @@ const zoomByLocationType: { [type: string]: number } = {
   [LocationType.Global]: 0,
   [LocationType.Region]: 1.9,
   [LocationType.Campus]: 13,
-  [LocationType.Building]: 18.5,
-  [LocationType.Floor]: 18.5,
+  [LocationType.Building]: 19.5,
+  [LocationType.Floor]: 19.5,
 }
 
 export const DEFAULT_ZOOM: number = zoomByLocationType[LocationType.Global];

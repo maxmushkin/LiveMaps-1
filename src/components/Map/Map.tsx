@@ -41,12 +41,16 @@ const Map: React.FC = () => {
   }, [dispatch]);
 
   const onMapClick = useCallback((e: MapMouseEvent) => {
-    const features = mapService.getFeatures(e.position);
+    //const features = mapService.getFeatures(e.position);
+    const features = mapService.getUnitFeatures(e.position)
+    console.log(e.position);
 
     if (!features || !features.length) {
       dispatch(resetCurrentIndoorLocation());
       return;
     }
+    //const unitFeatures = features.find(f => f.properties == "Indoor unit");
+    //const feature = (unitFeatures[0] as data.Feature<data.Geometry, any>);
 
     const feature = (features[0] as data.Feature<data.Geometry, any>);
     if (!feature) {
@@ -58,9 +62,10 @@ const Map: React.FC = () => {
     const levelFeatureId: string = feature.properties.levelFeatureId;
     const type: string = feature.properties.featureType;
     const floor = currentLocation?.name;
+    const label: string = feature.properties.nameAlt;
 
     if (name != null && levelFeatureId != null) {
-      dispatch(setCurrentIndoorLocation({ id, name, type, floor }));
+      dispatch(setCurrentIndoorLocation({ id, name, type, floor, label }));
     } else {
       dispatch(resetCurrentIndoorLocation());
     }

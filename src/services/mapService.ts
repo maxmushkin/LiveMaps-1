@@ -16,7 +16,7 @@ import {
 import { indoor } from 'azure-maps-indoor';
 import { Dispatch } from '@reduxjs/toolkit';
 
-import { subscriptionKey, trackerHostname } from '../config';
+import { subscriptionKey, trackerHostname, chronosTrackerHostname } from '../config';
 import { LocationData, LocationType } from '../models/locationsData';
 import {
   getLocationFacilityId,
@@ -40,7 +40,9 @@ import { Navigator } from './layers/Navigator';
 import { RoomsByFloorId } from '../models/roomsData';
 
 export const LayerId = {
+  ChronosXTags: 'xtag',
   FieldWorkers: 'field_workers',
+  ChronosLiveAssets: 'assets_live',
   Floors: 'floors',
   Occupancy: 'occupancy',
   Security: 'security',
@@ -329,6 +331,11 @@ class MapService {
     return this.map?.layers.getRenderedShapes(position, 'indoor') ?? [];
   }
 
+  public getUnitFeatures(position?: atlasData.Position) {
+    var indoorLayers = this.map?.layers.getRenderedShapes(position, 'indoor') ?? [];
+    return indoorLayers.slice(Math.max(indoorLayers.length - 2, 0));
+  }
+
   public getCamera() {
     return this.map?.getCamera();
   }
@@ -356,27 +363,38 @@ class MapService {
 }
 
 const isSecure = window.location.protocol === "https:";
-const wsScheme = isSecure ? "wss:" : "ws:";
+// const wsScheme = isSecure ? "wss:" : "ws:";
+const wsScheme = "wss:";
 const httpScheme = window.location.protocol;
 
 export const mapService: MapService = new MapService({
   layers: [
-    new IndoorLayer(LayerId.Temperature, 'Temperature'),
+    // new IndoorLayer(LayerId.Temperature, 'Temperature'),
     new IndoorLayer(LayerId.Occupancy, 'Occupancy'),
-    new WeatherLayer(LayerId.Weather, 'Weather', subscriptionKey),
+    // new WeatherLayer(LayerId.Weather, 'Weather', subscriptionKey),
     new MarkersLayer(LayerId.Security, 'Security'),
     new WarningsLayer(LayerId.Warnings, 'Warnings'),
-    new TrackingLayer(LayerId.FieldWorkers, "Field workers", {
-      dataUrl: `${httpScheme}//${trackerHostname}/field`,
-      trackerUrl: `${wsScheme}//${trackerHostname}/field_tracker`,
+    new TrackingLayer(LayerId.ChronosXTags, "Chronos XTags", {
+      dataUrl: `${httpScheme}//${chronosTrackerHostname}/xtag`,
+      trackerUrl: `${wsScheme}//${chronosTrackerHostname}/xtagtracker`,
       iconName: "Running",
-    }),
-    new TrackingLayer(LayerId.Shuttles, "Campus shuttles", {
-      dataUrl: `${httpScheme}//${trackerHostname}/shuttle`,
-      trackerUrl: `${wsScheme}//${trackerHostname}/shuttle_tracker`,
-      iconName: "Bus",
-      layerLocationType: LocationType.Campus,
-    }),
-    new FloorsLayer(LayerId.Floors, '3D'),
+    })
+    // ,new TrackingLayer(LayerId.FieldWorkers, "People", {
+    //   dataUrl: `${httpScheme}//${trackerHostname}/field`,
+    //   trackerUrl: `${wsScheme}//${trackerHostname}/field_tracker`,
+    //   iconName: "Running",
+    // })
+    // ,new TrackingLayer(LayerId.ChronosLiveAssets, "Assets", {
+    //   dataUrl: `${httpScheme}//${trackerHostname}/asset`,
+    //   trackerUrl: `${wsScheme}//${trackerHostname}/asset_tracker`,
+    //   iconName: "Devices2",
+    // })
+    // ,new TrackingLayer(LayerId.Shuttles, "Campus shuttles", {
+    //   dataUrl: `${httpScheme}//${trackerHostname}/shuttle`,
+    //   trackerUrl: `${wsScheme}//${trackerHostname}/shuttle_tracker`,
+    //   iconName: "Bus",
+    //   layerLocationType: LocationType.Campus,
+    // })
+    // ,new FloorsLayer(LayerId.Floors, '3D'),
   ],
 });

@@ -2,7 +2,7 @@ import { HtmlMarker, Map, Popup, TargetedEvent } from 'azure-maps-control';
 
 import { Layer, LayerType, LayerChildItem } from './Layer';
 import { LocationData, LocationType } from '../../models/locationsData';
-import { TrackerData } from '../../models/mapData';
+import { TrackerData, WebSocketConnectionMessage } from '../../models/mapData';
 import { getZoomByLocationType } from '../../utils/locationsUtils';
 
 const WS_STATE_CLOSED = 3;
@@ -232,9 +232,12 @@ export class TrackingLayer implements Layer {
         ((popup as any).containerDiv as HTMLElement).style.transition = "transform 1s linear";
       }
 
+      const iconName = data.icon ? data.icon : this.options.iconName;
+      const markerColor = data.color ? data.color : "#1A73AA";
+
       const marker = new HtmlMarker({
         text: data.name,
-        htmlContent: `<i class="trackerIcon ms-Icon ms-Icon--${this.options.iconName}"></i>`,
+        htmlContent: `<i style="background-color: ${markerColor}" class="trackerIcon ms-Icon ms-Icon--${iconName}"></i>`,
         position,
         popup,
         visible: this.areMarkersVisible,
@@ -267,7 +270,12 @@ export class TrackingLayer implements Layer {
     this.ws.onmessage = e => {
       try {
         const data = JSON.parse(e.data);
+        if(data as TrackerData[]){
         (data as TrackerData[]).forEach(d => this.updateMarker(d.id, d));
+        } else
+        if (data as WebSocketConnectionMessage){
+          console.log("Web Socket Connection Id:" + data.ConnectionId);
+        } 
       } catch (error) {
         console.warn("Couldn't parse marker data update");
       }

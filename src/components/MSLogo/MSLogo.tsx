@@ -12,7 +12,7 @@ const MSLogo: React.FC = () => {
     >
       <img
         className="ms-logo"
-        src="/static/images/microsoft-logo.png"
+        src="/static/images/chronos-logo.png"
         alt="logo"
         role="presentation"
         aria-hidden={true}

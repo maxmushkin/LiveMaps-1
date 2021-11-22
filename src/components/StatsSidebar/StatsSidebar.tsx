@@ -222,7 +222,8 @@ export const StatsSidebar: React.FC = () => {
 
   if (currentIndoorLocation) {
     const items: SidebarItemData[] = [
-      { type: "label", data: { name: "Room Type", value: currentIndoorLocation.type } },
+      { type: "label", data: { name: "Room Type", value: typeof(currentIndoorLocation.label) === "undefined" ? 
+      currentIndoorLocation.type : currentIndoorLocation.type + "(" + currentIndoorLocation.label + ")" } },
       { type: "label", data: { name: "Floor", value: currentIndoorLocation.floor } },
     ];
 

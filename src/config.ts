@@ -36,3 +36,4 @@ export const sidebarDataUrl = getUrl("REACT_APP_SIDEBAR_DATA_URL", "/sidebar/{lo
 export const warningsDataUrl = getUrl("REACT_APP_WARNINGS_DATA_URL", "/faults/{locationPath}");
 
 export const trackerHostname = process.env.REACT_APP_TRACKER_HOSTNAME ?? "localhost:3001";
+export const chronosTrackerHostname = process.env.CHRONOS_TRACKER_HOSTNAME ?? "chronosportalwss20211027145327.azurewebsites.net";

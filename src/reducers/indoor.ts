@@ -18,6 +18,7 @@ export interface IndoorLocation {
   name: string;
   type: string;
   floor?: string;
+  label?: string;
 }
 
 export interface IndoorState {
@@ -103,7 +104,7 @@ const fetchFeatureState = async (
   statesetName: string,
   featureId: string
 ): Promise<number | undefined> => {
-  const url = `https://us.atlas.microsoft.com/featureState/state?api-version=1.0&statesetId=${statesetId}&featureId=${featureId}&subscription-key=${subscriptionKey}`;
+  const url = `https://us.atlas.microsoft.com/featureStateSets/${statesetId}/featureStates/${featureId}?api-version=2.0&subscription-key=${subscriptionKey}`;
 
   try {
     const res = await fetch(url);
