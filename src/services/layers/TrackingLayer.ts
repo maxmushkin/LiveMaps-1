@@ -1,9 +1,18 @@
-import { HtmlMarker, Map, Popup, TargetedEvent } from 'azure-maps-control';
+import { 
+  HtmlMarker,
+  data as atlasData,
+  layer as atlasLayer,
+  source as atlasSource,
+  LineLayerOptions,
+  Map,
+  Popup,
+  TargetedEvent } from 'azure-maps-control';
 
 import { Layer, LayerType, LayerChildItem } from './Layer';
 import { LocationData, LocationType } from '../../models/locationsData';
-import { TrackerData, WebSocketConnectionMessage } from '../../models/mapData';
+import { TrackerData, RouteData, WebSocketConnectionMessage } from '../../models/mapData';
 import { getZoomByLocationType } from '../../utils/locationsUtils';
+import { Console } from 'console';
 
 const WS_STATE_CLOSED = 3;
 
@@ -23,6 +32,7 @@ export class TrackingLayer implements Layer {
   private map?: Map;
   private visible: boolean = false;
   private markers: Record<string, MarkerInfo | undefined> = {};
+  private routeDataSource: atlasSource.DataSource = new atlasSource.DataSource();
   private locationId?: string;
 
   private readonly minZoom: number;
@@ -161,11 +171,28 @@ export class TrackingLayer implements Layer {
 
     if (!isVisible) {
       this.stopTracking();
+      this.routeDataSource.clear();
       return
     }
 
     this.areMarkersVisible = this.shouldMarkersBeVisible(this.map);
     this.startTracking();
+    const strokeColor = 'red';
+
+    var routesLayer = new atlasLayer.LineLayer(
+      this.routeDataSource, 
+        undefined,
+        {
+          strokeColor: 'red',
+          strokeWidth: 3,
+          strokeOpacity: 1,
+          strokeDashArray: [0, 2],
+          filter: ['any', ['==', ['geometry-type'], 'LineString'], ['==', ['geometry-type'], 'MultiLineString']]
+        });
+    console.log("Routes layer Id:" + routesLayer.getId());
+
+    this.map.sources.add(this.routeDataSource);
+    this.map.layers.add(routesLayer);
   }
 
   async setLocation(location: LocationData): Promise<void> {
@@ -201,6 +228,11 @@ export class TrackingLayer implements Layer {
       return;
     }
 
+    if((data.location != this.locationId)){
+      this.setChildVisibility(markerId, false);
+      return;
+    }
+
     const { position: rawPosition } = data;
     if (rawPosition) {
       const { marker } = this.markers[markerId]!;
@@ -212,8 +244,60 @@ export class TrackingLayer implements Layer {
     }
   }
 
+  private createRoute(data: RouteData): void {
+    if (!this.map || !data.legs) {
+      return;
+    }
+
+    var legs = data.legs;
+    var features = []
+    for (var legIndex = 0; legIndex < legs.length; legIndex++) {
+      var leg = legs[legIndex];
+
+      //Convert the route point data into a format that the map control understands.
+      var legCoordinates = leg.points.map(function (point) {
+        return [point.longitude, point.latitude];
+      });
+
+      // for visualization, so the texts of elevator and the last leg don't overlap
+      if (legIndex === 2) {
+        legCoordinates.reverse();
+      }
+
+      var geometry = {
+        type: 'LineString',
+        coordinates: legCoordinates
+      };
+
+      var prop = {
+        travelTimeInSeconds: leg.summary.travelTimeInSeconds,
+        startLevel: leg.summary.startLevel,
+        endLevel: leg.summary.endLevel
+      };
+
+      var feature = {
+        type: 'Feature',
+        geometry: geometry,
+        id: 'path',
+        properties: prop
+      };
+
+      features.push(feature);
+    }
+
+    var geoJson = {
+      type: 'FeatureCollection',
+      features: features
+    };
+
+    //this.routeDataSource = new atlasSource.DataSource();
+    this.routeDataSource.add(geoJson);
+
+    console.log(geoJson);
+  }
+
   private createMarker(data: TrackerData): void {
-    if (!this.map || !data.position) {
+    if (!this.map || !data.position || (data.location != this.locationId)) {
       return;
     }
 
@@ -270,8 +354,12 @@ export class TrackingLayer implements Layer {
     this.ws.onmessage = e => {
       try {
         const data = JSON.parse(e.data);
-        if(data as TrackerData[]){
+        if(data as TrackerData[] && data.length > 0){
         (data as TrackerData[]).forEach(d => this.updateMarker(d.id, d));
+        } else
+        if(data as RouteData && data.summary){
+          this.routeDataSource.clear();
+          this.createRoute(data);
         } else
         if (data as WebSocketConnectionMessage){
           console.log("Web Socket Connection Id:" + data.ConnectionId);

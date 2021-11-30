@@ -26,6 +26,30 @@ export interface TrackerData {
   position: MapPosition;
   color: string;
   icon: string;
+  location: string;
+}
+
+export interface RouteData {
+  summary: Summary;
+  legs:  Leg[];
+}
+
+export interface Leg {
+  summary: Summary;
+  points:  Point[];
+}
+
+export interface Point {
+  latitude:  number;
+  longitude: number;
+}
+
+export interface Summary {
+  travelMode:          string;
+  lengthInMeters:      number;
+  travelTimeInSeconds: number;
+  startLevel:          number;
+  endLevel:            number;
 }
 
 export interface WebSocketConnectionMessage{
