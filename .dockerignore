@@ -1,0 +1,11 @@
+node_modules
+Dockerfile
+docs
+.vs
+.vscode
+.github
+build
+.git
+.gitignore
+.dockerignore
+
